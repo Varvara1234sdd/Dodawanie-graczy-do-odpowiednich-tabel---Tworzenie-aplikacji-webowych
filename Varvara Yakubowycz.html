@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista graczy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Dodaj gracza</h2>
+        <div>
+            <label for="name">Imię:</label>
+            <input type="text" id="name">
+        </div>
+        <div>
+            <label for="surname">Nazwisko:</label>
+            <input type="text" id="surname">
+        </div>
+        <div>
+            <label for="nick">Nick:</label>
+            <input type="text" id="nick">
+        </div>
+        <div>
+            <button onclick="addPlayer('cs2')">Dodaj do Counter-Strike 2</button>
+            <button onclick="addPlayer('valorant')">Dodaj do Valorant</button>
+            <button onclick="addPlayer('lol')">Dodaj do League of Legends</button>
+        </div>
+        <div id="message"></div>
+        <h2>Lista graczy</h2>
+        <h3>Counter-Strike 2</h3>
+        <table id="cs2Table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Nick</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <h3>Valorant</h3>
+        <table id="valorantTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Nick</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <h3>League of Legends</h3>
+        <table id="lolTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Nick</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        let players = {
+            cs2: [],
+            valorant: [],
+            lol: []
+        };
+
+        function addPlayer(game) {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+            const nick = document.getElementById('nick').value;
+
+            if (!name || !surname || !nick) {
+                document.getElementById('message').innerText = 'Nie podano wszystkich danych!';
+                return;
+            }
+
+            if (players[game].length >= 5) {
+                document.getElementById('message').innerText = 'Osiągnięto limit graczy w tej grze!';
+                return;
+            }
+
+            const existingPlayer = players[game].find(player => player.nick === nick);
+            if (existingPlayer) {
+                document.getElementById('message').innerText = 'Gracz o podanym nicku już istnieje w tej grze!';
+                return;
+            }
+
+            const playerId = players[game].length + 1;
+            players[game].push({ id: playerId, name, surname, nick });
+            document.getElementById('message').innerText = `Dodano gracza do ${game}`;
+
+            displayPlayers();
+        }
+
+        function displayPlayers() {
+            displayPlayersByGame('cs2', 'cs2Table');
+            displayPlayersByGame('valorant', 'valorantTable');
+            displayPlayersByGame('lol', 'lolTable');
+        }
+
+        function displayPlayersByGame(game, tableId) {
+            const tableBody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            players[game].forEach(player => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+          <td>${player.id}</td>
+          <td>${player.name}</td>
+          <td>${player.surname}</td>
+          <td>${player.nick}</td>
+        `;
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+
+</html>
